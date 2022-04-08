@@ -181,16 +181,19 @@ public class FrmManteProd extends JFrame {
 		EntityManagerFactory fabrica = Persistence.createEntityManagerFactory("mysql");
 		EntityManager em = fabrica.createEntityManager();
 		
-		Query consulta = em.createQuery("select p from Producto p where :id=id_prod", Producto.class);
-		consulta.setParameter("id", txtCodigo.getText());
-		
-		Producto p = (Producto)consulta.getSingleResult();
+//		Query consulta = em.createQuery("select p from Producto p where :id=id_prod", Producto.class);
+//		consulta.setParameter("id", txtCodigo.getText());
+//		
+//		Producto p = (Producto)consulta.getSingleResult();
+		Producto p = em.find(Producto.class, txtCodigo.getText());
 		
 		txtCodigo.setText(p.getCodigo());
 		txtDescripcion.setText(p.getDescripcion());
-//		txtPrecio.setText(p.getPrecio());
-//		txtCodigo.setText(p.getCodigo());
-//		txtCodigo.setText(p.getCodigo());
+		txtPrecio.setText(String.valueOf(p.getPrecio()));
+		txtStock.setText(String.valueOf(p.getStock()));
+		txtEstado.setText(String.valueOf(p.getEstado()));
+		cboCategorias.setSelectedIndex(p.getIdcategoria());
+		cboProveedores.setSelectedIndex(p.getIdprovedor());
 		
 		em.close();
 		
