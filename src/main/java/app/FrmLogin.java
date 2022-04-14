@@ -7,9 +7,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import models.Usuario;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -18,6 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 
 public class FrmLogin extends JFrame {
@@ -54,7 +58,7 @@ public class FrmLogin extends JFrame {
 		JButton btnNewButton = new JButton("Ingresar");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				registrar();
+				ingresar();
 			}
 		});
 		btnNewButton.setBounds(324, 29, 89, 23);
@@ -84,7 +88,22 @@ public class FrmLogin extends JFrame {
 	private JTextField txtClave;
 	
 	
-	void registrar() {
+	void ingresar() {
 		
+		EntityManagerFactory fabrica = Persistence.createEntityManagerFactory("mysql");
+		EntityManager em = fabrica.createEntityManager();
+		// select * from tb_usuarios where idtipo = 1
+		Query consulta = em.createNativeQuery("{call usp_validaAcceso(:usuario,:clave)}", Usuario.class);
+		consulta.setParameter("usuario", txtUsuario.getText());
+		consulta.setParameter("clave", txtClave.getText());
+
+		try {
+			Usuario u = (Usuario) consulta.getSingleResult();
+			JOptionPane.showMessageDialog(this, "Bienvenido, " + u.getNombre() + " " + u.getApellido());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, e.getMessage());
+		}
+		
+		em.close();
 	}
 }
